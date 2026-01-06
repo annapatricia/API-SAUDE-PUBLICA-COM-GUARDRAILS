@@ -1,6 +1,16 @@
 from fastapi import FastAPI, HTTPException         #isto é o guardrail
 from pydantic import BaseModel, validator          #isto é o guardrail
+import json
+from pathlib import Path
 from fastapi import FastAPI
+
+ARQUIVO_DOENCAS = Path("doencas.json")
+
+if ARQUIVO_DOENCAS.exists():
+    doencas = json.loads(ARQUIVO_DOENCAS.read_text(encoding="utf-8"))
+else:
+    doencas = []
+
 
 app = FastAPI(title="API Saúde Pública")
 
@@ -73,7 +83,15 @@ def cadastrar_doenca(doenca: Doenca):
     novo_id = max(d["id"] for d in doencas) + 1 if doencas else 1
     nova_doenca = doenca.dict()
     nova_doenca["id"] = novo_id
+
     doencas.append(nova_doenca)
+
+    # 🔹 AQUI: salva no arquivo
+    ARQUIVO_DOENCAS.write_text(
+        json.dumps(doencas, ensure_ascii=False, indent=2),
+        encoding="utf-8"
+    )
+
     return {
         "mensagem": "Doença cadastrada com sucesso",
         "doenca": nova_doenca
