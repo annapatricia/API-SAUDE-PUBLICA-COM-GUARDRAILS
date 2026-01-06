@@ -12,7 +12,7 @@ else:
     doencas = []
 
 
-app = FastAPI(title="API Saúde Pública")
+app = FastAPI(title="API Saúde Pública com Guardrail")
 
 #quadrils
 PALAVRAS_PROIBIDAS = [
